@@ -8,5 +8,14 @@
     <strong>Body:</strong>
     <%= post.body %>
   </p>
+  <p>
+    <strong>Updated at:</strong>
+    <br>
+    <%= time_tag post.updated_at %>
+    <br>
+    <%# <%= time_tag post.updated_at, "data-local": "time" %1> %>
+    <br>
+    <%= time_tag post.updated_at, "data-local": "time", "data-format": "%B %e, %Y %l:%M%P" %>
+  </p>
 
 </div>
