@@ -1,0 +1,29 @@
+name: rails_test_roast
+model: gpt-4o-mini
+
+tools:
+  - Roast::Tools::ReadFile
+  - Roast::Tools::WriteFile
+  - Roast::Tools::UpdateFiles
+  - Roast::Tools::Grep
+  - Roast::Tools::CodingAgent
+
+steps:
+  - check_bundle: "$(bundle check || echo 'missing')"
+  - ensure_bundle:
+      if: "{{ output.check_bundle.stdout.include?('missing') }}"
+      then:
+        - $(bundle install)
+  - setup_db: "$(bin/rails db:test:prepare)"
+  - run_tests: "$(RAILS_ENV=test bin/rails test || true)"
+  - analyze_failures
+  - ^apply_fixes
+  - rerun_tests: "$(RAILS_ENV=test bin/rails test || true)"
+  - Summarize the final test results and list any remaining failures, with next steps.
+
+# Step configs (named the same as steps above)
+run_tests:
+  exit_on_error: false
+
+rerun_tests:
+  exit_on_error: false
